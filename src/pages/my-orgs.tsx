@@ -9,6 +9,8 @@
 import * as React from "react";
 import { apiFetch, apiWrite } from "@neton/application-client-runtime/client";
 import { useQuery, useQueryClient } from "@neton/application-client-runtime/client-context";
+import { useT, type Translate } from "@neton/application-client-runtime/i18n";
+import { useTabTitle } from "@neton/application-client-runtime/workspace";
 import {
   Alert, Button, Card, CardContent, CardHeader, CardTitle, ConfirmDialog, Drawer, Field,
   Input, PageHeader, Select, StatusBadge, Table, TBody, TD, TH, THead, TR,
@@ -18,11 +20,23 @@ interface OrgBrief { id: number; name: string; logo: string; role: number; owner
 interface OrgDetail { id: number; name: string; logo: string; code: string; inviteCode: string; ownerAccountId: number; status: number; remark: string }
 interface MemberView { orgId: number; accountId: number; role: number; status: number; source: number; joinedAt: number | null; nickname: string; avatar: string | null }
 
-const ROLE_LABEL: Record<number, string> = { 1: "主账号", 2: "管理员", 3: "成员" };
 const ASSIGNABLE_ROLES = [2, 3];
 const isManager = (role: number) => role === 1 || role === 2;
 
+function roleLabel(t: Translate, role: number): string {
+  const key = role === 1 ? "role.owner" : role === 2 ? "role.admin" : role === 3 ? "role.member" : "";
+  return key && t.has(key) ? t(key) : String(role);
+}
+
+/** OrgMemberSource：1 创建人 / 2 后台分配 / 3 邀请码加入 / 4 后台邀请（仅审计，缺失回退数字）。 */
+function sourceLabel(t: Translate, source: number): string {
+  const key = `source.${source}`;
+  return t.has(key) ? t(key) : String(source);
+}
+
 export default function Page() {
+  const t = useT("organization");
+  useTabTitle(t("my.title"));
   const client = useQueryClient();
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
   const [error, setError] = React.useState<string | null>(null);
@@ -75,28 +89,28 @@ export default function Page() {
   const createOrg = () => run(async () => {
     await apiWrite("/app/org/create", "POST", { name: createName.trim() });
     setCreateOpen(false); setCreateName("");
-  }, "组织已创建");
+  }, t("toast.created"));
 
   const joinOrg = () => run(async () => {
     await apiWrite("/app/org/join", "POST", { inviteCode: joinCode.trim() });
     setJoinOpen(false); setJoinCode("");
-  }, "已加入组织");
+  }, t("toast.joined"));
 
   const saveProfile = () => run(async () => {
     await apiWrite("/app/org/update", "PUT", { id: selectedId, name: editName.trim() });
     setEditOpen(false);
-  }, "资料已更新");
+  }, t("toast.updated"));
 
   const resetCode = () => run(async () => {
     await apiWrite<string>(`/app/org/reset-invite-code?id=${selectedId}`, "POST");
-  }, "邀请码已重置");
+  }, t("toast.codeReset"));
 
   const addMember = () => run(async () => {
     const accountId = Number(addAccountId.trim());
-    if (!Number.isFinite(accountId) || accountId <= 0) throw new Error("请输入有效的账号 ID");
+    if (!Number.isFinite(accountId) || accountId <= 0) throw new Error(t("member.invalidId"));
     await apiWrite("/app/org/member/add", "POST", { orgId: selectedId, accountId, role: addRole });
     setAddOpen(false); setAddAccountId("");
-  }, "成员已添加");
+  }, t("toast.memberAdded"));
 
   const changeRole = (m: MemberView, role: number) => run(
     () => apiWrite("/app/org/member/update-role", "PUT", { orgId: selectedId, accountId: m.accountId, role }),
@@ -106,32 +120,32 @@ export default function Page() {
     if (!removing) return;
     await apiWrite("/app/org/member/remove", "POST", { orgId: selectedId, accountId: removing.accountId });
     setRemoving(null);
-  }, "成员已移除");
+  }, t("toast.memberRemoved"));
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader eyebrow="ORGANIZATION" title="我的组织" description="创建或加入组织，并在组织内维护成员（主/子账号）" actions={
+      <PageHeader eyebrow="ORGANIZATION" title={t("my.title")} description={t("my.description")} actions={
         <>
-          <Button variant="outline" onClick={() => { setJoinCode(""); setJoinOpen(true); }}>加入组织</Button>
-          <Button onClick={() => { setCreateName(""); setCreateOpen(true); }}>创建组织</Button>
+          <Button variant="outline" onClick={() => { setJoinCode(""); setJoinOpen(true); }}>{t("action.join")}</Button>
+          <Button onClick={() => { setCreateName(""); setCreateOpen(true); }}>{t("action.createOrg")}</Button>
         </>
       } />
       {error ? <Alert tone="error">{error}</Alert> : null}
       {notice ? <Alert tone="info">{notice}</Alert> : null}
 
       <Card>
-        <CardHeader><CardTitle>我的组织</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("my.cardTitle")}</CardTitle></CardHeader>
         <CardContent>
-          {myOrgs.isPending ? <div className="text-sm text-[var(--muted-foreground)]">加载中…</div> : null}
-          {!myOrgs.isPending && orgs.length === 0 ? <div className="text-sm text-[var(--muted-foreground)]">还没有组织，点右上角创建或加入。</div> : null}
+          {myOrgs.isPending ? <div className="text-sm text-[var(--muted-foreground)]">{t("common.loading")}</div> : null}
+          {!myOrgs.isPending && orgs.length === 0 ? <div className="text-sm text-[var(--muted-foreground)]">{t("my.empty")}</div> : null}
           <div className="flex flex-col">
             {orgs.map((org) => (
               <button key={org.id} type="button" onClick={() => setSelectedId(org.id)}
                 className={`flex items-center gap-3 border-b border-[var(--border)] py-3 text-left last:border-b-0 ${org.id === selectedId ? "font-semibold text-[var(--foreground)]" : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"}`}>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--muted)] text-xs">{org.name.slice(0, 1)}</span>
                 <span className="min-w-0 flex-1 truncate">{org.name}</span>
-                <span className="shrink-0 text-xs">{ROLE_LABEL[org.role] ?? org.role}</span>
-                <StatusBadge active={org.status === 1}>{org.status === 1 ? "正常" : "停用"}</StatusBadge>
+                <span className="shrink-0 text-xs">{roleLabel(t, org.role)}</span>
+                <StatusBadge active={org.status === 1}>{org.status === 1 ? t("status.enabled") : t("status.disabled")}</StatusBadge>
               </button>
             ))}
           </div>
@@ -143,30 +157,31 @@ export default function Page() {
           <CardHeader><CardTitle>{detail.data?.name ?? selected.name}</CardTitle></CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--muted-foreground)]">
-              <span>编号：{selected.id}</span>
-              <span>· 我的角色：{ROLE_LABEL[selected.role]}</span>
-              {detail.data?.code ? <span>· 编码：{detail.data.code}</span> : null}
+              <span>{t("detail.id", { id: selected.id })}</span>
+              <span>· {t("detail.myRole", { role: roleLabel(t, selected.role) })}</span>
+              {detail.data?.code ? <span>· {t("detail.code", { code: detail.data.code })}</span> : null}
             </div>
             {manager && detail.data?.inviteCode ? (
               <div className="flex items-center gap-3">
                 <div className="rounded-md border border-[var(--border)] bg-[var(--muted)] px-3 py-1.5 font-mono text-sm tracking-widest">{detail.data.inviteCode}</div>
-                <Button size="sm" variant="outline" onClick={() => void resetCode()}>重置邀请码</Button>
+                <Button size="sm" variant="outline" onClick={() => void resetCode()}>{t("action.resetCode")}</Button>
               </div>
             ) : null}
             {manager ? (
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => { setEditName(detail.data?.name ?? ""); setEditOpen(true); }}>编辑资料</Button>
+                <Button size="sm" variant="outline" onClick={() => { setEditName(detail.data?.name ?? ""); setEditOpen(true); }}>{t("action.editProfile")}</Button>
               </div>
             ) : null}
             {detail.data?.remark ? <div className="text-sm text-[var(--muted-foreground)]">{detail.data.remark}</div> : null}
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <div className="text-sm font-semibold text-[var(--foreground)]">成员</div>
-                {manager ? <Button size="sm" onClick={() => { setAddAccountId(""); setAddRole(3); setAddOpen(true); }}>添加成员</Button> : null}
+                <div className="text-sm font-semibold text-[var(--foreground)]">{t("section.members")}</div>
+                {manager ? <Button size="sm" onClick={() => { setAddAccountId(""); setAddRole(3); setAddOpen(true); }}>{t("action.addMember")}</Button> : null}
               </div>
+              <div className="overflow-x-auto">
               <Table>
-                <THead><TR><TH>账号 ID</TH><TH>昵称</TH><TH>角色</TH><TH>来源</TH>{manager ? <TH className="text-right">操作</TH> : null}</TR></THead>
+                <THead><TR><TH>{t("field.accountId")}</TH><TH>{t("field.nickname")}</TH><TH>{t("field.role")}</TH><TH>{t("field.source")}</TH>{manager ? <TH className="text-right">{t("field.operations")}</TH> : null}</TR></THead>
                 <TBody>
                   {(members.data ?? []).map((m) => (
                     <TR key={m.accountId}>
@@ -175,65 +190,66 @@ export default function Page() {
                       <TD>
                         {manager && m.role !== 1 ? (
                           <Select value={String(m.role)} onChange={(event) => void changeRole(m, Number(event.target.value))}>
-                            {ASSIGNABLE_ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
+                            {ASSIGNABLE_ROLES.map((r) => <option key={r} value={r}>{roleLabel(t, r)}</option>)}
                           </Select>
-                        ) : <span className="text-xs">{ROLE_LABEL[m.role] ?? m.role}</span>}
+                        ) : <span className="text-xs">{roleLabel(t, m.role)}</span>}
                       </TD>
-                      <TD className="text-xs text-[var(--muted-foreground)]">{m.source}</TD>
+                      <TD className="text-xs text-[var(--muted-foreground)]">{sourceLabel(t, m.source)}</TD>
                       {manager ? (
                         <TD className="text-right">
-                          {m.role !== 1 ? <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => setRemoving(m)}>移除</button> : null}
+                          {m.role !== 1 ? <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => setRemoving(m)}>{t("action.remove")}</button> : null}
                         </TD>
                       ) : null}
                     </TR>
                   ))}
                   {!members.isPending && (members.data ?? []).length === 0 ? (
-                    <TR><TD colSpan={manager ? 5 : 4} className="py-4 text-center text-sm text-[var(--muted-foreground)]">暂无成员</TD></TR>
+                    <TR><TD colSpan={manager ? 5 : 4} className="py-4 text-center text-sm text-[var(--muted-foreground)]">{t("members.empty")}</TD></TR>
                   ) : null}
                 </TBody>
               </Table>
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <Drawer open={createOpen} onClose={() => setCreateOpen(false)} title="创建组织" footer={<>
-        <Button variant="outline" onClick={() => setCreateOpen(false)}>取消</Button>
-        <Button onClick={() => void createOrg()} disabled={!createName.trim()}>创建</Button>
+      <Drawer open={createOpen} onClose={() => setCreateOpen(false)} title={t("drawer.createTitle")} footer={<>
+        <Button variant="outline" onClick={() => setCreateOpen(false)}>{t("action.cancel")}</Button>
+        <Button onClick={() => void createOrg()} disabled={!createName.trim()}>{t("action.create")}</Button>
       </>}>
-        <Field label="组织名称"><Input value={createName} onChange={(e) => setCreateName(e.target.value)} maxLength={32} autoFocus /></Field>
-        <div className="mt-2 text-xs text-[var(--muted-foreground)]">创建后你即为该组织的主账号（OWNER），可邀请 / 分配成员。</div>
+        <Field label={t("field.orgName")}><Input value={createName} onChange={(e) => setCreateName(e.target.value)} maxLength={32} autoFocus /></Field>
+        <div className="mt-2 text-xs text-[var(--muted-foreground)]">{t("drawer.createHint")}</div>
       </Drawer>
 
-      <Drawer open={joinOpen} onClose={() => setJoinOpen(false)} title="凭邀请码加入组织" footer={<>
-        <Button variant="outline" onClick={() => setJoinOpen(false)}>取消</Button>
-        <Button onClick={() => void joinOrg()} disabled={!joinCode.trim()}>加入</Button>
+      <Drawer open={joinOpen} onClose={() => setJoinOpen(false)} title={t("drawer.joinTitle")} footer={<>
+        <Button variant="outline" onClick={() => setJoinOpen(false)}>{t("action.cancel")}</Button>
+        <Button onClick={() => void joinOrg()} disabled={!joinCode.trim()}>{t("action.joinConfirm")}</Button>
       </>}>
-        <Field label="邀请码"><Input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="组织主账号提供的 10 位邀请码" autoFocus /></Field>
+        <Field label={t("field.inviteCode")}><Input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder={t("drawer.joinPlaceholder")} autoFocus /></Field>
       </Drawer>
 
-      <Drawer open={editOpen} onClose={() => setEditOpen(false)} title="编辑组织资料" footer={<>
-        <Button variant="outline" onClick={() => setEditOpen(false)}>取消</Button>
-        <Button onClick={() => void saveProfile()} disabled={!editName.trim()}>保存</Button>
+      <Drawer open={editOpen} onClose={() => setEditOpen(false)} title={t("drawer.editTitle")} footer={<>
+        <Button variant="outline" onClick={() => setEditOpen(false)}>{t("action.cancel")}</Button>
+        <Button onClick={() => void saveProfile()} disabled={!editName.trim()}>{t("action.save")}</Button>
       </>}>
-        <Field label="组织名称"><Input value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={32} /></Field>
+        <Field label={t("field.orgName")}><Input value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={32} /></Field>
       </Drawer>
 
-      <Drawer open={addOpen} onClose={() => setAddOpen(false)} title="添加成员" footer={<>
-        <Button variant="outline" onClick={() => setAddOpen(false)}>取消</Button>
-        <Button onClick={() => void addMember()} disabled={!addAccountId.trim()}>添加</Button>
+      <Drawer open={addOpen} onClose={() => setAddOpen(false)} title={t("drawer.addTitle")} footer={<>
+        <Button variant="outline" onClick={() => setAddOpen(false)}>{t("action.cancel")}</Button>
+        <Button onClick={() => void addMember()} disabled={!addAccountId.trim()}>{t("action.add")}</Button>
       </>}>
         <div className="flex flex-col gap-4">
-          <Field label="账号 ID"><Input value={addAccountId} onChange={(e) => setAddAccountId(e.target.value)} inputMode="numeric" placeholder="要纳入组织的账号 ID" /></Field>
-          <Field label="角色">
+          <Field label={t("field.accountId")}><Input value={addAccountId} onChange={(e) => setAddAccountId(e.target.value)} inputMode="numeric" placeholder={t("drawer.addAccountIdPlaceholder")} /></Field>
+          <Field label={t("field.role")}>
             <Select value={String(addRole)} onChange={(e) => setAddRole(Number(e.target.value))}>
-              {ASSIGNABLE_ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
+              {ASSIGNABLE_ROLES.map((r) => <option key={r} value={r}>{roleLabel(t, r)}</option>)}
             </Select>
           </Field>
         </div>
       </Drawer>
 
-      <ConfirmDialog open={Boolean(removing)} title="移除成员" description="将该账号从此组织移除（不影响其账号本身）。" confirmLabel="移除" onCancel={() => setRemoving(null)} onConfirm={() => void removeMember()} />
+      <ConfirmDialog open={Boolean(removing)} title={t("confirm.removeTitle")} description={t("confirm.removeDescription")} confirmLabel={t("action.remove")} onCancel={() => setRemoving(null)} onConfirm={() => void removeMember()} />
     </div>
   );
 }

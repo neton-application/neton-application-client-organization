@@ -8,6 +8,10 @@ import { defineFrontModule } from "@neton/application-client-contract";
 export default defineFrontModule({
   id: "organization",
   contractVersion: "1.0.0",
+  locales: [
+    { lang: "zh-CN", entry: "zh-CN" },
+    { lang: "en-US", entry: "en-US" },
+  ],
   pages: [
     { key: "organization/my/index", path: "/organization/my", entry: "my-orgs", rendering: "client", title: "我的组织" },
   ],
