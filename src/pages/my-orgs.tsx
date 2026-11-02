@@ -124,7 +124,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader eyebrow="ORGANIZATION" title={t("my.title")} description={t("my.description")} actions={
+      <PageHeader eyebrow={t("eyebrow.org")} title={t("my.title")} description={t("my.description")} actions={
         <>
           <Button variant="outline" onClick={() => { setJoinCode(""); setJoinOpen(true); }}>{t("action.join")}</Button>
           <Button onClick={() => { setCreateName(""); setCreateOpen(true); }}>{t("action.createOrg")}</Button>

@@ -1,6 +1,7 @@
 /** Module `organization` (client) en-US catalog. Keys must exactly match zh-CN. */
 const messages: Record<string, string> = {
   // Page
+  "eyebrow.org": "ORGANIZATION",
   "my.title": "My organization",
   "my.description": "Create or join an organization and manage its members (owner / sub-accounts).",
   "my.cardTitle": "My organizations",

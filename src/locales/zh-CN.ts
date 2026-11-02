@@ -1,6 +1,7 @@
 /** 模块 `organization`（C 端）的 zh-CN 词条。命名空间 = 模块 id，key 在 zh / en 之间必须完全一致。 */
 const messages: Record<string, string> = {
   // 页面
+  "eyebrow.org": "组织",
   "my.title": "我的组织",
   "my.description": "创建或加入组织，并在组织内维护成员（主/子账号）",
   "my.cardTitle": "我的组织",
