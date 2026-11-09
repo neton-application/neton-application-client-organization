@@ -3,9 +3,9 @@ const messages: Record<string, string> = {
   // 页面
   "eyebrow.org": "组织",
   "my.title": "我的组织",
-  "my.description": "创建或加入组织，并在组织内维护成员（主/子账号）",
+  "my.description": "组织由管理后台开通；在这里查看所属组织，负责人/管理员维护成员，成员只看自己。",
   "my.cardTitle": "我的组织",
-  "my.empty": "还没有组织，点右上角创建或加入。",
+  "my.empty": "你还没有加入任何组织，请联系管理后台开通。",
   "common.loading": "加载中…",
 
   // 状态 / 角色
@@ -24,19 +24,15 @@ const messages: Record<string, string> = {
   // 详情字段
   "detail.id": "编号：{id}",
   "detail.myRole": "我的角色：{role}",
-  "detail.code": "编码：{code}",
+  "detail.code": "组织标识：{code}",
 
   // 动作
-  "action.join": "加入组织",
-  "action.createOrg": "创建组织",
   "action.create": "创建",
-  "action.joinConfirm": "加入",
   "action.add": "添加",
   "action.addMember": "添加成员",
   "action.cancel": "取消",
   "action.save": "保存",
   "action.editProfile": "编辑资料",
-  "action.resetCode": "重置邀请码",
   "action.remove": "移除",
 
   // 成员区块 / 表头
@@ -47,28 +43,31 @@ const messages: Record<string, string> = {
   "field.source": "来源",
   "field.operations": "操作",
   "field.orgName": "组织名称",
-  "field.inviteCode": "邀请码",
+  "field.password": "登录密码",
   "members.empty": "暂无成员",
 
+  // 成员添加模式
+  "member.mode": "添加方式",
+  "member.modeCreate": "新建子账号",
+  "member.modeExisting": "纳管已有账号",
+
   // 抽屉 / 弹层
-  "drawer.createTitle": "创建组织",
-  "drawer.createHint": "创建后你即为该组织的主账号（OWNER），可邀请 / 分配成员。",
-  "drawer.joinTitle": "凭邀请码加入组织",
-  "drawer.joinPlaceholder": "组织主账号提供的 10 位邀请码",
   "drawer.editTitle": "编辑组织资料",
   "drawer.addTitle": "添加成员",
   "drawer.addAccountIdPlaceholder": "要纳入组织的账号 ID",
+  "drawer.passwordPlaceholder": "至少 8 位",
+  "drawer.createMemberHint": "登录账号由系统按组织标识自动生成（如标识 shang → shang1、shang2）；你只需设置昵称和初始密码，成员用该账号+密码登录 console，只能看到自己的信息和本组织的设备。",
   "confirm.removeTitle": "移除成员",
   "confirm.removeDescription": "将该账号从此组织移除（不影响其账号本身）。",
 
   // 提示 / 错误
-  "toast.created": "组织已创建",
-  "toast.joined": "已加入组织",
   "toast.updated": "资料已更新",
-  "toast.codeReset": "邀请码已重置",
+  "toast.memberCreated": "子账号已创建并加入组织",
+  "toast.memberCreatedWithUsername": "子账号已创建：登录账号 {username}（请告知成员，用此账号+密码登录 console）",
   "toast.memberAdded": "成员已添加",
   "toast.memberRemoved": "成员已移除",
   "member.invalidId": "请输入有效的账号 ID",
+  "member.passwordShort": "密码至少 8 位",
 };
 
 export default messages;
