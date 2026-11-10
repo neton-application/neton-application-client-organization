@@ -9,7 +9,7 @@ import * as React from "react";
 import { apiFetch } from "@neton/application-client-runtime/client";
 import { useQuery } from "@neton/application-client-runtime/client-context";
 import { useT, type Translate } from "@neton/application-client-runtime/i18n";
-import { useTabTitle, useWorkspaceNavigation, useWorkspaceRoute } from "@neton/application-client-runtime/workspace";
+import { useTabTitle, useWorkspaceRoute } from "@neton/application-client-runtime/workspace";
 import {
   Alert, Button, Card, CardContent, CardHeader, CardTitle, PageHeader,
 } from "@neton/application-client-kit";
@@ -63,7 +63,6 @@ export default function Page() {
   const t = useT("organization");
   useTabTitle(t("stats.title"));
   const route = useWorkspaceRoute();
-  const nav = useWorkspaceNavigation();
 
   const orgIdRaw = route.params.orgId ?? route.query.orgId ?? "";
   const orgId = Number(orgIdRaw);
@@ -87,7 +86,6 @@ export default function Page() {
       <div className="flex flex-col gap-4">
         <PageHeader eyebrow={t("eyebrow.org")} title={t("stats.title")} description={t("stats.description")} />
         <Alert tone="error">{t("stats.missingOrg")}</Alert>
-        <Button variant="outline" onClick={() => nav.open("/organization/my")}>{t("action.backToOrgs")}</Button>
       </div>
     );
   }
@@ -102,7 +100,6 @@ export default function Page() {
         eyebrow={t("eyebrow.org")}
         title={t("stats.title")}
         description={t("stats.description")}
-        actions={<Button size="sm" variant="outline" onClick={() => nav.open("/organization/my")}>{t("action.backToOrgs")}</Button>}
       />
       {overview.error ? <Alert tone="error">{(overview.error as Error).message}</Alert> : null}
 

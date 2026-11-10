@@ -7,7 +7,7 @@ import * as React from "react";
 import { apiFetch, apiWrite } from "@neton/application-client-runtime/client";
 import { useQuery, useQueryClient } from "@neton/application-client-runtime/client-context";
 import { useT, type Translate } from "@neton/application-client-runtime/i18n";
-import { useTabTitle, useWorkspaceNavigation, useWorkspaceRoute } from "@neton/application-client-runtime/workspace";
+import { useTabTitle, useWorkspaceRoute } from "@neton/application-client-runtime/workspace";
 import {
   Alert, Button, Card, CardContent, CardHeader, CardTitle, Drawer, Field, Input,
   PageHeader, StatusBadge,
@@ -27,7 +27,6 @@ export default function Page() {
   const t = useT("organization");
   useTabTitle(t("profile.title"));
   const route = useWorkspaceRoute();
-  const nav = useWorkspaceNavigation();
   const client = useQueryClient();
 
   const orgIdRaw = route.params.orgId ?? route.query.orgId ?? "";
@@ -67,7 +66,6 @@ export default function Page() {
       <div className="flex flex-col gap-4">
         <PageHeader eyebrow={t("eyebrow.org")} title={t("profile.title")} description={t("profile.description")} />
         <Alert tone="error">{t("profile.missingOrg")}</Alert>
-        <Button variant="outline" onClick={() => nav.open("/organization/my")}>{t("action.backToOrgs")}</Button>
       </div>
     );
   }
@@ -78,10 +76,7 @@ export default function Page() {
         eyebrow={t("eyebrow.org")}
         title={t("profile.title")}
         description={t("profile.description")}
-        actions={<>
-          <Button size="sm" variant="outline" onClick={() => nav.open("/organization/my")}>{t("action.backToOrgs")}</Button>
-          {manager ? <Button size="sm" onClick={() => { setEditName(org?.name ?? brief?.name ?? ""); setEditOpen(true); }}>{t("action.editProfile")}</Button> : null}
-        </>}
+        actions={manager ? <Button size="sm" onClick={() => { setEditName(org?.name ?? brief?.name ?? ""); setEditOpen(true); }}>{t("action.editProfile")}</Button> : undefined}
       />
       {error ? <Alert tone="error">{error}</Alert> : null}
       {notice ? <Alert tone="info">{notice}</Alert> : null}
