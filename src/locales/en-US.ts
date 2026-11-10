@@ -1,12 +1,18 @@
-/** Module `organization` (client) en-US catalog. Keys must exactly match zh-CN. */
+/** Module `organization` (C-end) en-US catalog. Namespace = module id; keys must match zh-CN exactly. */
 const messages: Record<string, string> = {
-  // Page
-  "eyebrow.org": "ORGANIZATION",
-  "my.title": "My organization",
-  "my.description": "Organizations are provisioned by the backoffice. View the ones you belong to; owners/admins manage members, members see only themselves.",
-  "my.cardTitle": "My organizations",
-  "my.empty": "You are not in any organization yet — ask the backoffice to provision one.",
+  // Common
+  "eyebrow.org": "Organization",
   "common.loading": "Loading…",
+  "action.refresh": "Refresh",
+  "action.cancel": "Cancel",
+  "action.save": "Save",
+  "action.create": "Create",
+  "action.remove": "Remove",
+  "action.editProfile": "Edit profile",
+  "action.backToOrgs": "Back to my organizations",
+  "nav.stats": "Statistics",
+  "nav.members": "Members",
+  "nav.profile": "Profile",
 
   // Status / role
   "status.enabled": "Active",
@@ -17,57 +23,90 @@ const messages: Record<string, string> = {
 
   // Member source (OrgMemberSource)
   "source.1": "Creator",
-  "source.2": "Assigned by backoffice",
+  "source.2": "Assigned by backend",
   "source.3": "Joined via invite code",
-  "source.4": "Invited by backoffice",
+  "source.4": "Invited by backend",
 
-  // Detail fields
-  "detail.id": "ID: {id}",
-  "detail.myRole": "My role: {role}",
-  "detail.code": "Organization code: {code}",
+  // Device type (stats distribution code → label)
+  "deviceType.0": "Unknown",
+  "deviceType.1": "Android",
+  "deviceType.2": "iOS",
 
-  // Actions
-  "action.create": "Create",
-  "action.add": "Add",
-  "action.addMember": "Add member",
-  "action.cancel": "Cancel",
-  "action.save": "Save",
-  "action.editProfile": "Edit profile",
-  "action.remove": "Remove",
+  // My organizations (directory page)
+  "my.title": "My organizations",
+  "my.description": "Organizations are provisioned by the admin backend; every organization you belong to is listed here. Open one to view its statistics, members and profile.",
+  "my.cardTitle": "Organization directory",
+  "my.empty": "You have not joined any organization yet. Please contact the admin backend.",
+  "my.orgCount": "{count} organizations",
+  "overview.code": "Code: {code}",
+  "overview.enterStats": "Statistics",
+  "overview.enterMembers": "Members",
+  "overview.enterProfile": "Profile",
 
-  // Members section / table headers
-  "section.members": "Members",
+  // Organization profile
+  "profile.title": "Organization profile",
+  "profile.description": "View this organization's basic profile; admins can edit the organization name.",
+  "profile.id": "ID: {id}",
+  "profile.myRole": "My role: {role}",
+  "profile.code": "Code: {code}",
+  "profile.status": "Status",
+  "profile.remark": "Remark",
+  "profile.orgName": "Organization name",
+  "profile.editTitle": "Edit organization profile",
+  "profile.updated": "Profile updated",
+  "profile.missingOrg": "Missing organization parameter. Please enter from \"My organizations\".",
+  "profile.noRemark": "No remark",
+
+  // Organization members
+  "members.title": "Members",
+  "members.description": "Manage this organization's members: create sub-accounts, change roles, remove members. Regular members can only see themselves.",
+  "members.empty": "No members yet",
+  "members.addTitle": "Create sub-account",
+  "members.created": "Sub-account created and added to the organization",
+  "members.createdWithUsername": "Sub-account created: login account {username} (please tell the member to sign in to the console with this account + password)",
+  "members.removed": "Member removed",
+  "members.passwordShort": "Password must be at least 8 characters",
+  "members.passwordPlaceholder": "At least 8 characters",
+  "members.createHint": "The login account is generated automatically from the organization code (e.g. code shang → shang1, shang2). You only set the nickname and initial password; the member signs in to the console with that account + password and can see only their own info and this organization's devices.",
+  "members.removeTitle": "Remove member",
+  "members.removeDescription": "Remove this account from the organization (does not affect the account itself).",
+  "members.orgLabel": "Organization: {name}",
+  "field.username": "Login account",
   "field.accountId": "Account ID",
   "field.nickname": "Nickname",
   "field.role": "Role",
   "field.source": "Source",
-  "field.operations": "Actions",
-  "field.orgName": "Organization name",
+  "field.joinedAt": "Joined",
+  "field.operations": "Operations",
   "field.password": "Password",
-  "members.empty": "No members yet",
 
-  // Member add mode
-  "member.mode": "Add method",
-  "member.modeCreate": "Create sub-account",
-  "member.modeExisting": "Manage existing account",
-
-  // Drawers / dialogs
-  "drawer.editTitle": "Edit organization profile",
-  "drawer.addTitle": "Add member",
-  "drawer.addAccountIdPlaceholder": "Account ID to add to the organization",
-  "drawer.passwordPlaceholder": "At least 8 characters",
-  "drawer.createMemberHint": "The username is generated automatically from the organization code (e.g. code shang → shang1, shang2). You only set a nickname and initial password; the member logs in to the console with that username + password and can only see their own info and this organization's devices.",
-  "confirm.removeTitle": "Remove member",
-  "confirm.removeDescription": "This removes the account from the organization (its account itself is unaffected).",
-
-  // Toasts / errors
-  "toast.updated": "Profile updated",
-  "toast.memberCreated": "Sub-account created and added to the organization",
-  "toast.memberCreatedWithUsername": "Sub-account created: username {username} (share it with the member to log in to the console with this username + password)",
-  "toast.memberAdded": "Member added",
-  "toast.memberRemoved": "Member removed",
-  "member.invalidId": "Please enter a valid account ID",
-  "member.passwordShort": "Password must be at least 8 characters",
+  // Statistics
+  "stats.title": "Statistics",
+  "stats.description": "Real-time statistics for this organization's devices and members: totals, online status, daily trend and model distribution.",
+  "stats.range7": "Last 7 days",
+  "stats.range30": "Last 30 days",
+  "stats.range90": "Last 90 days",
+  "stats.totalDevices": "Total devices",
+  "stats.online": "Online",
+  "stats.offline": "Offline",
+  "stats.inactive": "Inactive",
+  "stats.disabled": "Disabled",
+  "stats.onlineRate": "Online rate",
+  "stats.todayNew": "New today",
+  "stats.memberCount": "Members",
+  "stats.dailyTrend": "Daily trend",
+  "stats.newDevices": "New devices",
+  "stats.activeDevices": "Active devices",
+  "stats.date": "Date",
+  "stats.distribution": "Distribution",
+  "stats.deviceType": "Device type",
+  "stats.brandTop": "Top brands",
+  "stats.modelTop": "Top models",
+  "stats.osVersionTop": "Top OS versions",
+  "stats.empty": "No statistics yet",
+  "stats.noData": "No data",
+  "stats.missingOrg": "Missing organization parameter. Please enter from \"My organizations\".",
+  "stats.activeNote": "Active is approximated by deduplicating the day's device-reported operation events; historical online duration is not stored.",
 };
 
 export default messages;

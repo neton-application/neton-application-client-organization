@@ -1,12 +1,18 @@
 /** 模块 `organization`（C 端）的 zh-CN 词条。命名空间 = 模块 id，key 在 zh / en 之间必须完全一致。 */
 const messages: Record<string, string> = {
-  // 页面
+  // 通用
   "eyebrow.org": "组织",
-  "my.title": "我的组织",
-  "my.description": "组织由管理后台开通；在这里查看所属组织，负责人/管理员维护成员，成员只看自己。",
-  "my.cardTitle": "我的组织",
-  "my.empty": "你还没有加入任何组织，请联系管理后台开通。",
   "common.loading": "加载中…",
+  "action.refresh": "刷新",
+  "action.cancel": "取消",
+  "action.save": "保存",
+  "action.create": "创建",
+  "action.remove": "移除",
+  "action.editProfile": "编辑资料",
+  "action.backToOrgs": "返回我的组织",
+  "nav.stats": "数据统计",
+  "nav.members": "组织成员",
+  "nav.profile": "组织资料",
 
   // 状态 / 角色
   "status.enabled": "正常",
@@ -21,53 +27,86 @@ const messages: Record<string, string> = {
   "source.3": "邀请码加入",
   "source.4": "后台邀请",
 
-  // 详情字段
-  "detail.id": "编号：{id}",
-  "detail.myRole": "我的角色：{role}",
-  "detail.code": "组织标识：{code}",
+  // 设备类型（统计分布投影 code → 文案）
+  "deviceType.0": "未知",
+  "deviceType.1": "Android",
+  "deviceType.2": "iOS",
 
-  // 动作
-  "action.create": "创建",
-  "action.add": "添加",
-  "action.addMember": "添加成员",
-  "action.cancel": "取消",
-  "action.save": "保存",
-  "action.editProfile": "编辑资料",
-  "action.remove": "移除",
+  // 我的组织（目录页）
+  "my.title": "我的组织",
+  "my.description": "组织由管理后台开通；这里列出你所属的全部组织，点进任一组织查看数据统计、成员与资料。",
+  "my.cardTitle": "组织目录",
+  "my.empty": "你还没有加入任何组织，请联系管理后台开通。",
+  "my.orgCount": "共 {count} 个组织",
+  "overview.code": "组织标识：{code}",
+  "overview.enterStats": "数据统计",
+  "overview.enterMembers": "组织成员",
+  "overview.enterProfile": "组织资料",
 
-  // 成员区块 / 表头
-  "section.members": "成员",
+  // 组织资料
+  "profile.title": "组织资料",
+  "profile.description": "查看本组织的基本资料；管理员可修改组织名称。",
+  "profile.id": "编号：{id}",
+  "profile.myRole": "我的角色：{role}",
+  "profile.code": "组织标识：{code}",
+  "profile.status": "状态",
+  "profile.remark": "备注",
+  "profile.orgName": "组织名称",
+  "profile.editTitle": "编辑组织资料",
+  "profile.updated": "资料已更新",
+  "profile.missingOrg": "缺少组织参数，请从「我的组织」进入。",
+  "profile.noRemark": "暂无备注",
+
+  // 组织成员
+  "members.title": "组织成员",
+  "members.description": "管理本组织成员：新建子账号、调整角色、移除成员。普通成员只能看到自己。",
+  "members.empty": "暂无成员",
+  "members.addTitle": "新建子账号",
+  "members.created": "子账号已创建并加入组织",
+  "members.createdWithUsername": "子账号已创建：登录账号 {username}（请告知成员，用此账号 + 密码登录 console）",
+  "members.removed": "成员已移除",
+  "members.passwordShort": "密码至少 8 位",
+  "members.passwordPlaceholder": "至少 8 位",
+  "members.createHint": "登录账号由系统按组织标识自动生成（如标识 shang → shang1、shang2）；你只需设置昵称和初始密码，成员用该账号 + 密码登录 console，只能看到自己的信息和本组织的设备。",
+  "members.removeTitle": "移除成员",
+  "members.removeDescription": "将该账号从此组织移除（不影响其账号本身）。",
+  "members.orgLabel": "组织：{name}",
+  "field.username": "登录账号",
   "field.accountId": "账号 ID",
   "field.nickname": "昵称",
   "field.role": "角色",
   "field.source": "来源",
+  "field.joinedAt": "加入时间",
   "field.operations": "操作",
-  "field.orgName": "组织名称",
   "field.password": "登录密码",
-  "members.empty": "暂无成员",
 
-  // 成员添加模式
-  "member.mode": "添加方式",
-  "member.modeCreate": "新建子账号",
-  "member.modeExisting": "纳管已有账号",
-
-  // 抽屉 / 弹层
-  "drawer.editTitle": "编辑组织资料",
-  "drawer.addTitle": "添加成员",
-  "drawer.addAccountIdPlaceholder": "要纳入组织的账号 ID",
-  "drawer.passwordPlaceholder": "至少 8 位",
-  "drawer.createMemberHint": "登录账号由系统按组织标识自动生成（如标识 shang → shang1、shang2）；你只需设置昵称和初始密码，成员用该账号+密码登录 console，只能看到自己的信息和本组织的设备。",
-  "confirm.removeTitle": "移除成员",
-  "confirm.removeDescription": "将该账号从此组织移除（不影响其账号本身）。",
-
-  // 提示 / 错误
-  "toast.updated": "资料已更新",
-  "toast.memberCreated": "子账号已创建并加入组织",
-  "toast.memberCreatedWithUsername": "子账号已创建：登录账号 {username}（请告知成员，用此账号+密码登录 console）",
-  "toast.memberAdded": "成员已添加",
-  "toast.memberRemoved": "成员已移除",
-  "member.invalidId": "请输入有效的账号 ID",
-  "member.passwordShort": "密码至少 8 位",
+  // 数据统计
+  "stats.title": "数据统计",
+  "stats.description": "本组织设备与成员的实时统计：总量、在线情况、每日趋势与机型分布。",
+  "stats.range7": "近 7 天",
+  "stats.range30": "近 30 天",
+  "stats.range90": "近 90 天",
+  "stats.totalDevices": "总设备数",
+  "stats.online": "在线",
+  "stats.offline": "离线",
+  "stats.inactive": "未激活",
+  "stats.disabled": "禁用",
+  "stats.onlineRate": "在线率",
+  "stats.todayNew": "今日新增",
+  "stats.memberCount": "成员数",
+  "stats.dailyTrend": "每日趋势",
+  "stats.newDevices": "新增设备",
+  "stats.activeDevices": "活跃设备",
+  "stats.date": "日期",
+  "stats.distribution": "分布",
+  "stats.deviceType": "设备类型",
+  "stats.brandTop": "品牌 Top",
+  "stats.modelTop": "型号 Top",
+  "stats.osVersionTop": "系统版本 Top",
+  "stats.empty": "暂无统计数据",
+  "stats.noData": "暂无数据",
+  "stats.missingOrg": "缺少组织参数，请从「我的组织」进入。",
+  "stats.activeNote": "活跃以设备当日回推的操作事件去重近似；库内未保存历史在线时长。",
 };
 
 export default messages;
